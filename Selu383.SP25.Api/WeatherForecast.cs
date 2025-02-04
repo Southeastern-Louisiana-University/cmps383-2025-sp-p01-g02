@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Selu383.SP25.Api
 {
     public class WeatherForecast
