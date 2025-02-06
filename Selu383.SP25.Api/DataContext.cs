@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Selu383.SP25.Api.Dtos;
+using Selu383.SP25.Api.Entities;
 using System;
 
 namespace Selu383.SP25.Api

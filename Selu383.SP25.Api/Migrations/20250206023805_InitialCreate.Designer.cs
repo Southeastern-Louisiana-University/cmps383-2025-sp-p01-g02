@@ -11,7 +11,7 @@ using Selu383.SP25.Api;
 namespace Selu383.SP25.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250203015905_InitialCreate")]
+    [Migration("20250206023805_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -24,7 +24,7 @@ namespace Selu383.SP25.Api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Selu383.SP25.Api.Dtos.Theater", b =>
+            modelBuilder.Entity("Selu383.SP25.Api.Entities.Theater", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,9 +33,11 @@ namespace Selu383.SP25.Api.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SeatCount")
