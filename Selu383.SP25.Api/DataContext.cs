@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Selu383.SP25.Api.Dtos;
+using Selu383.SP25.Api.Entities;
 using System;
 
 namespace Selu383.SP25.Api
@@ -17,7 +17,9 @@ namespace Selu383.SP25.Api
             //Our seeded data
 
             modelBuilder.Entity<Theater>().HasData(
-                new Theater { Id = 1, Name = "Marcus Theater", Address = "123 Street", SeatCount = 500 }
+                new Theater { Id = 1, Name = "Marcus Theater", Address = "123 Street", SeatCount = 500 },
+                new Theater { Id=2, Name="AMC", Address = "Hammond", SeatCount = 200},
+                new Theater { Id=3, Name = "Cineplex", Address = "Irving Mall", SeatCount = 350}
                 );
         }
     }
