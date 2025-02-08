@@ -1,151 +1,163 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Selu383.SP25.Api.Dtos;
 using Selu383.SP25.Api.Entities;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Selu383.SP25.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class TheatersController : ControllerBase
+    [Route("/api/theaters")]
+    public class TheaterController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly DataContext _dataContext;
 
-        public TheatersController(DataContext context)
+        public TheaterController(DataContext dataContext)
         {
-            _context = context;
+            _dataContext = dataContext;
         }
 
-        // GET: api/theaters
+        //  LIST ALL THEATERS
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TheaterDto>>> GetTheaters()
+        public IActionResult GetAll()
         {
-            var theaters = await _context.Theaters
-                .Select(t => new TheaterDto
+            var theaters = _dataContext.Theaters
+                .Select(t => new TheaterGetDto
                 {
                     Id = t.Id,
                     Name = t.Name,
                     Address = t.Address,
                     SeatCount = t.SeatCount
-                }).ToListAsync();
+                }).ToList();
 
             return Ok(theaters);
         }
 
-        // GET: api/theaters/1
+        // GET THEATER BY ID
         [HttpGet("{id}")]
-        public async Task<ActionResult<TheaterDto>> GetTheater(int id)
+        public IActionResult GetById(int id)
         {
-            var theater = await _context.Theaters
+            var theater = _dataContext.Theaters
                 .Where(t => t.Id == id)
-                .Select(t => new TheaterDto
+                .Select(t => new TheaterGetDto
                 {
                     Id = t.Id,
                     Name = t.Name,
                     Address = t.Address,
                     SeatCount = t.SeatCount
-                }).FirstOrDefaultAsync();
+                })
+                .FirstOrDefault();
 
             if (theater == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Theater not found." });
             }
 
             return Ok(theater);
         }
 
-        // POST: api/theaters
+        //  CREATE A NEW THEATER
         [HttpPost]
-        public async Task<ActionResult<TheaterDto>> PostTheater(TheaterDto theaterDto)
+        public IActionResult CreateTheater([FromBody] TheaterCreateDto createDto)
         {
-            if (string.IsNullOrEmpty(theaterDto.Name) || theaterDto.Name.Length > 120)
+            var errors = new List<string>();
+
+            // Validate Name
+            if (string.IsNullOrWhiteSpace(createDto.Name) || createDto.Name.Length > 120)
             {
-                return BadRequest("Name must be provided and cannot be longer than 120 characters.");
+                errors.Add("Name must be between 1 and 120 characters.");
             }
 
-            if (string.IsNullOrEmpty(theaterDto.Address))
+            // Validate Address
+            if (string.IsNullOrWhiteSpace(createDto.Address))
             {
-                return BadRequest("Address is required.");
+                errors.Add("Address cannot be empty.");
             }
 
-            if (theaterDto.SeatCount < 1)
+            if (errors.Any())
             {
-                return BadRequest("SeatCount must be a valid number and greater than 0.");
+                return BadRequest(new { message = "Validation failed.", errors });
             }
 
-            var theater = new Theater
+            var newTheater = new Theater
             {
-                Name = theaterDto.Name,
-                Address = theaterDto.Address,
-                SeatCount = theaterDto.SeatCount
+                Name = createDto.Name,
+                Address = createDto.Address,
+                SeatCount = createDto.SeatCount
             };
 
-            _context.Theaters.Add(theater);
-            await _context.SaveChangesAsync();
+            _dataContext.Theaters.Add(newTheater);
+            _dataContext.SaveChanges();
 
-            // Return the created DTO with 201 status code
-            return CreatedAtAction(nameof(GetTheater), new { id = theater.Id }, new TheaterDto
+            return CreatedAtAction(nameof(GetById), new { id = newTheater.Id }, new TheaterGetDto
             {
-                Id = theater.Id,
-                Name = theater.Name,
-                Address = theater.Address,
-                SeatCount = theater.SeatCount
+                Id = newTheater.Id,
+                Name = newTheater.Name,
+                Address = newTheater.Address,
+                SeatCount = newTheater.SeatCount
             });
         }
 
-        // PUT: api/theaters/1
+        //  UPDATE EXISTING THEATER
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTheater(int id, [FromBody] TheaterDto theaterDto)
+        public IActionResult UpdateTheater([FromBody] TheaterUpdateDto updateDto, int id)
         {
-            // Validate the input data
-            if (!ModelState.IsValid)
+            var theaterToUpdate = _dataContext.Theaters.Find(id);
+
+            if (theaterToUpdate == null)
             {
-                return BadRequest(ModelState);
+                return NotFound(new { message = "Theater not found." });
             }
 
-            // Find the theater by id
-            var theater = await _context.Theaters.FindAsync(id);
-            if (theater == null)
+            var errors = new List<string>();
+
+            // Validate Name
+            if (string.IsNullOrWhiteSpace(updateDto.Name) || updateDto.Name.Length > 120)
             {
-                return NotFound();  // Theater not found
+                errors.Add("Name must be between 1 and 120 characters.");
             }
 
-            // Update the theater's properties
-            theater.Name = theaterDto.Name;
-            theater.Address = theaterDto.Address;
-            theater.SeatCount = theaterDto.SeatCount; 
-
-            // Save the changes
-            await _context.SaveChangesAsync();
-
-            // Return the updated TheaterDto
-            return Ok(new TheaterDto
+            // Validate Address
+            if (string.IsNullOrWhiteSpace(updateDto.Address))
             {
-                Id = theater.Id,
-                Name = theater.Name,
-                Address = theater.Address,
-                SeatCount = theater.SeatCount 
+                errors.Add("Address cannot be empty.");
+            }
+
+            if (errors.Any())
+            {
+                return BadRequest(new { message = "Validation failed.", errors });
+            }
+
+            theaterToUpdate.Name = updateDto.Name;
+            theaterToUpdate.Address = updateDto.Address;
+            theaterToUpdate.SeatCount = updateDto.SeatCount;
+
+            _dataContext.SaveChanges();
+
+            return Ok(new TheaterGetDto
+            {
+                Id = theaterToUpdate.Id,
+                Name = theaterToUpdate.Name,
+                Address = theaterToUpdate.Address,
+                SeatCount = theaterToUpdate.SeatCount
             });
         }
 
-
-        // DELETE: api/theaters/1
+        //  DELETE A THEATER
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTheater(int id)
+        public IActionResult Delete(int id)
         {
-            var theater = await _context.Theaters.FindAsync(id);
+            var theater = _dataContext.Theaters.Find(id);
+
             if (theater == null)
             {
                 return NotFound();
             }
 
-            _context.Theaters.Remove(theater);
-            await _context.SaveChangesAsync();
+            _dataContext.Theaters.Remove(theater);
+            _dataContext.SaveChanges();
 
-            return NoContent(); // 204 No Content for successful deletion
+            return Ok();
         }
     }
 }
