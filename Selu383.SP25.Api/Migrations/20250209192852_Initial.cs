@@ -2,10 +2,12 @@
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Selu383.SP25.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,7 +30,12 @@ namespace Selu383.SP25.Api.Migrations
             migrationBuilder.InsertData(
                 table: "Theaters",
                 columns: new[] { "Id", "Address", "Name", "SeatCount" },
-                values: new object[] { 1, "123 Street", "Marcus Theater", 500 });
+                values: new object[,]
+                {
+                    { 1, "123 Street", "Marcus Theater", 500 },
+                    { 2, "Hammond", "AMC", 200 },
+                    { 3, "Irving Mall", "Cineplex", 350 }
+                });
         }
 
         /// <inheritdoc />
