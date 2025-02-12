@@ -24,7 +24,7 @@ namespace Selu383.SP25.Api
             {
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<DataContext>();
-                context.Database.Migrate();
+               // context.Database.Migrate();
             }
 
             // Configure the HTTP request pipeline.

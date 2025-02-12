@@ -78,6 +78,15 @@ namespace Selu383.SP25.Api.Controllers
             {
                 return BadRequest(new { message = "Validation failed.", errors });
             }
+            if (createDto.SeatCount <= 0)
+            {
+                errors.Add("SeatCount must be greater than zero.");
+            }
+
+            if (errors.Any())
+            {
+                return BadRequest(new { message = "Validation failed.", errors });
+            }
 
             var newTheater = new Theater
             {
