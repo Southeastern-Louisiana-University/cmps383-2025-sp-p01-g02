@@ -18,21 +18,21 @@ public class TheaterSeeder
         {
             new Theater
             {
-                Name = "Grand Cinemas",
-                SeatCount = 200,
-                Address = "123 Movie Blvd, City Center"
+                Name = "QFX Cinemas",
+                SeatCount = 250,
+                Address = "Civil Mall, Kathmandu"
             },
             new Theater
             {
-                Name = "Luxury Theaters",
-                SeatCount = 150,
-                Address = "456 Luxe Ave, Uptown"
+                Name = "Big Cinemas",
+                SeatCount = 340,
+                Address = "345 Durbarmarg, Ktm"
             },
             new Theater
             {
-                Name = "Downtown Cinema",
-                SeatCount = 300,
-                Address = "789 Main Street, Downtown"
+                Name = "ACM Theaters",
+                SeatCount = 260,
+                Address = "230 Pecan Street, Hammond"
             }
         };
 
