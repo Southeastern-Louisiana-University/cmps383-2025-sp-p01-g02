@@ -11,8 +11,8 @@ using Selu383.SP25.Api;
 namespace Selu383.SP25.Api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250209192852_Initial")]
-    partial class Initial
+    [Migration("20250213011804_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,29 +46,6 @@ namespace Selu383.SP25.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Theaters");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Address = "123 Street",
-                            Name = "Marcus Theater",
-                            SeatCount = 500
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Address = "Hammond",
-                            Name = "AMC",
-                            SeatCount = 200
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Address = "Irving Mall",
-                            Name = "Cineplex",
-                            SeatCount = 350
-                        });
                 });
 #pragma warning restore 612, 618
         }
